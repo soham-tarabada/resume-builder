@@ -3,7 +3,7 @@
 Resume Builder is a modern, easy-to-use web application for creating beautiful, professional resumes. It features real-time preview, PDF export, and multiple templates, making it simple for users to craft and download their resumes quickly.
 
 You can access the live version of this project at:  
-[Live Portfolio Website Link](https://soham-tarabada.github.io/resume-builder/)
+[Live Website Link](https://soham-tarabada.github.io/resume-builder/)
 
 ## Features
 - **Live Resume Editing:** Fill out forms for personal info, education, experience, projects, and skills.
