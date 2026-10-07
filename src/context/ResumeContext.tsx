@@ -1,6 +1,8 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import React, { createContext, useCallback, useContext, useEffect, useMemo, useState, ReactNode } from 'react';
 import { v4 as uuidv4 } from 'uuid';
-import { defaultTemplates } from '../data/resumeTemplates';
+import type { PaletteName } from '../data/palettes';
+import { sampleResume } from '../data/sampleResume';
+import { defaultResumeData, normalizeResume, STORAGE_KEY } from './resumeData';
 
 export interface Education {
   id: string;
@@ -54,10 +56,11 @@ export interface PersonalInfo {
   github: string;
 }
 
-export interface ResumeTemplate {
-  id: string;
-  name: string;
-  thumbnail: string;
+export interface ResumeTheme {
+  /** Accent palette override; `null` keeps the template's own color. */
+  accent: PaletteName | null;
+  /** Font id from FONT_OPTIONS; `default` keeps the template's own font. */
+  font: string;
 }
 
 export interface ResumeData {
@@ -67,7 +70,10 @@ export interface ResumeData {
   projects: Project[];
   skills: Skill[];
   selectedTemplate: string;
+  theme: ResumeTheme;
 }
+
+export type ListSection = 'education' | 'experience' | 'projects' | 'skills';
 
 interface ResumeContextType {
   resumeData: ResumeData;
@@ -81,42 +87,33 @@ interface ResumeContextType {
   addProject: () => void;
   updateProject: (id: string, data: Partial<Project>) => void;
   removeProject: (id: string) => void;
-  addSkill: () => void;
+  addSkill: (name?: string) => void;
   updateSkill: (id: string, data: Partial<Skill>) => void;
   removeSkill: (id: string) => void;
+  moveItem: (section: ListSection, id: string, direction: -1 | 1) => void;
+  /** Puts a removed entry back at its old position (powers "Undo"). */
+  restoreItem: <S extends ListSection>(section: S, item: ResumeData[S][number], index: number) => void;
   updateTemplate: (templateId: string) => void;
-  templates: ResumeTemplate[];
+  updateTheme: (theme: Partial<ResumeTheme>) => void;
+  loadSample: () => void;
+  importResume: (data: unknown) => void;
   resetResume: () => void;
+  /** Epoch ms of the last successful local save, or null if storage is unavailable. */
+  savedAt: number | null;
 }
 
-const defaultPersonalInfo: PersonalInfo = {
-  firstName: '',
-  lastName: '',
-  email: '',
-  phone: '',
-  address: '',
-  city: '',
-  state: '',
-  zipCode: '',
-  country: '',
-  title: '',
-  summary: '',
-  linkedin: '',
-  website: '',
-  github: ''
-};
-
-const defaultResumeData: ResumeData = {
-  personalInfo: defaultPersonalInfo,
-  education: [],
-  experience: [],
-  projects: [],
-  skills: [],
-  selectedTemplate: defaultTemplates[0].id
+const loadSaved = (): ResumeData => {
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    return saved ? normalizeResume(JSON.parse(saved)) : defaultResumeData;
+  } catch {
+    return defaultResumeData;
+  }
 };
 
 const ResumeContext = createContext<ResumeContextType | undefined>(undefined);
 
+// eslint-disable-next-line react-refresh/only-export-components -- hook is co-located with its provider
 export const useResume = () => {
   const context = useContext(ResumeContext);
   if (!context) {
@@ -125,27 +122,65 @@ export const useResume = () => {
   return context;
 };
 
-export const ResumeProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [resumeData, setResumeData] = useState<ResumeData>(() => {
-    const saved = localStorage.getItem('resumeData');
-    return saved ? JSON.parse(saved) : defaultResumeData;
-  });
-  
-  const templates = defaultTemplates;
+const noop = () => {};
 
-  // Save to localStorage whenever resumeData changes
+/**
+ * Renders templates against fixed data (thumbnails, the landing page) without
+ * touching the user's resume. Actions are inert inside this provider.
+ */
+export const ResumeDataProvider: React.FC<{ data: ResumeData; children: ReactNode }> = ({ data, children }) => {
+  const value = useMemo<ResumeContextType>(
+    () => ({
+      resumeData: data,
+      updatePersonalInfo: noop,
+      addEducation: noop,
+      updateEducation: noop,
+      removeEducation: noop,
+      addExperience: noop,
+      updateExperience: noop,
+      removeExperience: noop,
+      addProject: noop,
+      updateProject: noop,
+      removeProject: noop,
+      addSkill: noop,
+      updateSkill: noop,
+      removeSkill: noop,
+      moveItem: noop,
+      restoreItem: noop,
+      updateTemplate: noop,
+      updateTheme: noop,
+      loadSample: noop,
+      importResume: noop,
+      resetResume: noop,
+      savedAt: null
+    }),
+    [data]
+  );
+  return <ResumeContext.Provider value={value}>{children}</ResumeContext.Provider>;
+};
+
+export const ResumeProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+  const [resumeData, setResumeData] = useState<ResumeData>(loadSaved);
+  const [savedAt, setSavedAt] = useState<number | null>(null);
+
   useEffect(() => {
-    localStorage.setItem('resumeData', JSON.stringify(resumeData));
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(resumeData));
+      setSavedAt(Date.now());
+    } catch {
+      // Private mode or quota exceeded: keep working in memory.
+      setSavedAt(null);
+    }
   }, [resumeData]);
 
-  const updatePersonalInfo = (info: Partial<PersonalInfo>) => {
+  const updatePersonalInfo = useCallback((info: Partial<PersonalInfo>) => {
     setResumeData(prev => ({
       ...prev,
       personalInfo: { ...prev.personalInfo, ...info }
     }));
-  };
+  }, []);
 
-  const addEducation = () => {
+  const addEducation = useCallback(() => {
     const newEducation: Education = {
       id: uuidv4(),
       institution: '',
@@ -155,30 +190,30 @@ export const ResumeProvider: React.FC<{ children: ReactNode }> = ({ children }) 
       endDate: '',
       description: ''
     };
-    
+
     setResumeData(prev => ({
       ...prev,
       education: [...prev.education, newEducation]
     }));
-  };
+  }, []);
 
-  const updateEducation = (id: string, data: Partial<Education>) => {
+  const updateEducation = useCallback((id: string, data: Partial<Education>) => {
     setResumeData(prev => ({
       ...prev,
-      education: prev.education.map(edu => 
+      education: prev.education.map(edu =>
         edu.id === id ? { ...edu, ...data } : edu
       )
     }));
-  };
+  }, []);
 
-  const removeEducation = (id: string) => {
+  const removeEducation = useCallback((id: string) => {
     setResumeData(prev => ({
       ...prev,
       education: prev.education.filter(edu => edu.id !== id)
     }));
-  };
+  }, []);
 
-  const addExperience = () => {
+  const addExperience = useCallback(() => {
     const newExperience: Experience = {
       id: uuidv4(),
       company: '',
@@ -189,30 +224,30 @@ export const ResumeProvider: React.FC<{ children: ReactNode }> = ({ children }) 
       description: '',
       isCurrentPosition: false
     };
-    
+
     setResumeData(prev => ({
       ...prev,
       experience: [...prev.experience, newExperience]
     }));
-  };
+  }, []);
 
-  const updateExperience = (id: string, data: Partial<Experience>) => {
+  const updateExperience = useCallback((id: string, data: Partial<Experience>) => {
     setResumeData(prev => ({
       ...prev,
-      experience: prev.experience.map(exp => 
+      experience: prev.experience.map(exp =>
         exp.id === id ? { ...exp, ...data } : exp
       )
     }));
-  };
+  }, []);
 
-  const removeExperience = (id: string) => {
+  const removeExperience = useCallback((id: string) => {
     setResumeData(prev => ({
       ...prev,
       experience: prev.experience.filter(exp => exp.id !== id)
     }));
-  };
+  }, []);
 
-  const addProject = () => {
+  const addProject = useCallback(() => {
     const newProject: Project = {
       id: uuidv4(),
       title: '',
@@ -220,88 +255,158 @@ export const ResumeProvider: React.FC<{ children: ReactNode }> = ({ children }) 
       technologies: '',
       link: ''
     };
-    
+
     setResumeData(prev => ({
       ...prev,
       projects: [...prev.projects, newProject]
     }));
-  };
+  }, []);
 
-  const updateProject = (id: string, data: Partial<Project>) => {
+  const updateProject = useCallback((id: string, data: Partial<Project>) => {
     setResumeData(prev => ({
       ...prev,
-      projects: prev.projects.map(proj => 
+      projects: prev.projects.map(proj =>
         proj.id === id ? { ...proj, ...data } : proj
       )
     }));
-  };
+  }, []);
 
-  const removeProject = (id: string) => {
+  const removeProject = useCallback((id: string) => {
     setResumeData(prev => ({
       ...prev,
       projects: prev.projects.filter(proj => proj.id !== id)
     }));
-  };
+  }, []);
 
-  const addSkill = () => {
+  const addSkill = useCallback((name = '') => {
     const newSkill: Skill = {
       id: uuidv4(),
-      name: '',
+      name,
       level: 3
     };
-    
+
     setResumeData(prev => ({
       ...prev,
       skills: [...prev.skills, newSkill]
     }));
-  };
+  }, []);
 
-  const updateSkill = (id: string, data: Partial<Skill>) => {
+  const updateSkill = useCallback((id: string, data: Partial<Skill>) => {
     setResumeData(prev => ({
       ...prev,
-      skills: prev.skills.map(skill => 
+      skills: prev.skills.map(skill =>
         skill.id === id ? { ...skill, ...data } : skill
       )
     }));
-  };
+  }, []);
 
-  const removeSkill = (id: string) => {
+  const removeSkill = useCallback((id: string) => {
     setResumeData(prev => ({
       ...prev,
       skills: prev.skills.filter(skill => skill.id !== id)
     }));
-  };
+  }, []);
 
-  const updateTemplate = (templateId: string) => {
+  const moveItem = useCallback((section: ListSection, id: string, direction: -1 | 1) => {
+    setResumeData(prev => {
+      const items = [...prev[section]] as { id: string }[];
+      const from = items.findIndex(item => item.id === id);
+      const to = from + direction;
+      if (from < 0 || to < 0 || to >= items.length) return prev;
+      [items[from], items[to]] = [items[to], items[from]];
+      return { ...prev, [section]: items };
+    });
+  }, []);
+
+  const restoreItem = useCallback(<S extends ListSection>(section: S, item: ResumeData[S][number], index: number) => {
+    setResumeData(prev => {
+      const items = [...prev[section]] as ResumeData[S][number][];
+      if (items.some(existing => existing.id === item.id)) return prev;
+      items.splice(Math.min(index, items.length), 0, item);
+      return { ...prev, [section]: items };
+    });
+  }, []);
+
+  const updateTemplate = useCallback((templateId: string) => {
     setResumeData(prev => ({
       ...prev,
       selectedTemplate: templateId
     }));
-  };
+  }, []);
 
-  const resetResume = () => {
-    setResumeData(defaultResumeData);
-  };
+  const updateTheme = useCallback((theme: Partial<ResumeTheme>) => {
+    setResumeData(prev => ({
+      ...prev,
+      theme: { ...prev.theme, ...theme }
+    }));
+  }, []);
 
-  const value = {
-    resumeData,
-    updatePersonalInfo,
-    addEducation,
-    updateEducation,
-    removeEducation,
-    addExperience,
-    updateExperience,
-    removeExperience,
-    addProject,
-    updateProject,
-    removeProject,
-    addSkill,
-    updateSkill,
-    removeSkill,
-    updateTemplate,
-    templates,
-    resetResume
-  };
+  const loadSample = useCallback(() => {
+    setResumeData(prev => ({
+      ...normalizeResume(sampleResume),
+      selectedTemplate: prev.selectedTemplate,
+      theme: prev.theme
+    }));
+  }, []);
+
+  const importResume = useCallback((data: unknown) => {
+    setResumeData(normalizeResume(data));
+  }, []);
+
+  const resetResume = useCallback(() => {
+    setResumeData(prev => ({ ...defaultResumeData, selectedTemplate: prev.selectedTemplate, theme: prev.theme }));
+  }, []);
+
+  const value = useMemo(
+    () => ({
+      resumeData,
+      updatePersonalInfo,
+      addEducation,
+      updateEducation,
+      removeEducation,
+      addExperience,
+      updateExperience,
+      removeExperience,
+      addProject,
+      updateProject,
+      removeProject,
+      addSkill,
+      updateSkill,
+      removeSkill,
+      moveItem,
+      restoreItem,
+      updateTemplate,
+      updateTheme,
+      loadSample,
+      importResume,
+      resetResume,
+      savedAt
+    }),
+    [
+      resumeData,
+      updatePersonalInfo,
+      addEducation,
+      updateEducation,
+      removeEducation,
+      addExperience,
+      updateExperience,
+      removeExperience,
+      addProject,
+      updateProject,
+      removeProject,
+      addSkill,
+      updateSkill,
+      removeSkill,
+      moveItem,
+      restoreItem,
+      updateTemplate,
+      updateTheme,
+      loadSample,
+      importResume,
+      resetResume,
+      savedAt
+    ]
+  );
 
   return (
     <ResumeContext.Provider value={value}>

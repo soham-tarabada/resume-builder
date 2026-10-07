@@ -1,87 +1,121 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { Plus, Sparkles, X } from 'lucide-react';
 import { useResume } from '../../context/ResumeContext';
-import FormField from '../ui/FormField';
-import { Plus, Trash2 } from 'lucide-react';
+import { useRemoveWithUndo } from '../../hooks/useRemoveWithUndo';
+import { inputClass } from '../ui/FormField';
+import SectionHeader from '../ui/SectionHeader';
+
+const LEVELS = ['Beginner', 'Familiar', 'Proficient', 'Advanced', 'Expert'];
 
 const SkillsForm: React.FC = () => {
-  const { resumeData, addSkill, updateSkill, removeSkill } = useResume();
+  const { resumeData, addSkill, updateSkill } = useResume();
+  const removeWithUndo = useRemoveWithUndo();
   const { skills } = resumeData;
+  const [draft, setDraft] = useState('');
 
-  const handleChange = (id: string, e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    updateSkill(id, { [name]: value });
+  const commit = (raw: string) => {
+    const existing = new Set(skills.map(skill => skill.name.trim().toLowerCase()));
+    raw
+      .split(/[,\n]/)
+      .map(name => name.trim())
+      .filter(name => name && !existing.has(name.toLowerCase()))
+      .forEach(name => {
+        existing.add(name.toLowerCase());
+        addSkill(name);
+      });
+    setDraft('');
   };
 
-  const handleLevelChange = (id: string, level: number) => {
-    updateSkill(id, { level });
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === 'Enter' || event.key === ',') {
+      event.preventDefault();
+      commit(draft);
+    } else if (event.key === 'Backspace' && !draft && skills.length) {
+      const last = skills[skills.length - 1];
+      removeWithUndo('skills', last.id, last.name || 'Skill');
+    }
   };
 
   return (
-    <div className="space-y-8 animate-fadeIn">
-      <div className="flex justify-between items-center">
-        <h3 className="text-lg font-medium text-gray-900">Skills</h3>
-        <button
-          type="button"
-          onClick={addSkill}
-          className="inline-flex items-center px-3 py-1.5 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-        >
-          <Plus className="h-4 w-4 mr-1" />
-          Add Skill
-        </button>
+    <div className="space-y-6 animate-fadeIn">
+      <SectionHeader title="Skills" description="Tools, languages and strengths. These are the keywords ATS filters scan for." />
+
+      <div>
+        <label htmlFor="skill-quick-add" className="mb-1.5 block text-[13px] font-medium text-slate-700">
+          Quick add
+        </label>
+        <div className="flex gap-2">
+          <input
+            id="skill-quick-add"
+            value={draft}
+            onChange={e => setDraft(e.target.value)}
+            onKeyDown={handleKeyDown}
+            onPaste={e => {
+              const text = e.clipboardData.getData('text');
+              if (/[,\n]/.test(text)) {
+                e.preventDefault();
+                commit(text);
+              }
+            }}
+            placeholder="Type a skill and press Enter (or paste a comma-separated list)"
+            className={inputClass}
+          />
+          <button
+            type="button"
+            onClick={() => commit(draft)}
+            disabled={!draft.trim()}
+            className="inline-flex shrink-0 items-center gap-1 rounded-xl bg-slate-900 px-4 text-sm font-semibold text-white transition hover:bg-slate-800 disabled:opacity-40"
+          >
+            <Plus className="h-4 w-4" /> Add
+          </button>
+        </div>
       </div>
 
       {skills.length === 0 ? (
-        <div className="text-center py-8 border-2 border-dashed border-gray-200 rounded-lg">
-          <p className="text-gray-500">No skills added yet. Click "Add Skill" to get started.</p>
+        <div className="flex items-start gap-3 rounded-2xl border-2 border-dashed border-slate-200 bg-white/60 p-5 text-sm text-slate-500">
+          <Sparkles className="mt-0.5 h-5 w-5 shrink-0 text-indigo-500" />
+          <p>
+            Aim for 6–12 skills. Paste a list like <span className="font-medium text-slate-700">TypeScript, React, Figma, SQL</span> to add them all at once.
+          </p>
         </div>
       ) : (
-        <div className="space-y-4">
-          {skills.map((skill) => (
-            <div key={skill.id} className="p-4 border border-gray-200 rounded-lg flex items-center">
-              <div className="flex-1">
-                <FormField
-                  label="Skill Name"
-                  name="name"
-                  value={skill.name}
-                  onChange={(e) => handleChange(skill.id, e)}
-                  placeholder="JavaScript"
-                  className="mb-0"
-                  required
-                />
-              </div>
-              
-              <div className="ml-4 flex-shrink-0">
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Proficiency
-                </label>
-                <div className="flex space-x-1">
-                  {[1, 2, 3, 4, 5].map((level) => (
+        <ul className="divide-y divide-slate-100 overflow-hidden rounded-2xl border border-slate-200 bg-white">
+          {skills.map(skill => (
+            <li key={skill.id} className="flex flex-wrap items-center gap-3 px-4 py-3 sm:flex-nowrap">
+              <input
+                aria-label="Skill name"
+                value={skill.name}
+                onChange={e => updateSkill(skill.id, { name: e.target.value })}
+                placeholder="Skill"
+                className="min-w-0 flex-1 rounded-lg border border-transparent bg-transparent px-2 py-1 font-medium text-slate-900 transition hover:border-slate-200 focus:border-indigo-400 focus:outline-none focus:ring-4 focus:ring-indigo-500/10"
+              />
+              <div className="flex items-center gap-2">
+                <div className="flex gap-1" role="radiogroup" aria-label={`${skill.name || 'Skill'} proficiency`}>
+                  {LEVELS.map((label, i) => (
                     <button
-                      key={level}
+                      key={label}
                       type="button"
-                      onClick={() => handleLevelChange(skill.id, level)}
-                      className={`w-6 h-6 rounded-full ${
-                        level <= skill.level
-                          ? 'bg-blue-600'
-                          : 'bg-gray-200'
-                      }`}
-                      aria-label={`Proficiency level ${level}`}
+                      role="radio"
+                      aria-checked={skill.level === i + 1}
+                      title={label}
+                      onClick={() => updateSkill(skill.id, { level: i + 1 })}
+                      className={`h-2.5 w-6 rounded-full transition ${i < skill.level ? 'bg-indigo-600' : 'bg-slate-200 hover:bg-slate-300'}`}
                     />
                   ))}
                 </div>
+                <span className="w-[72px] text-xs font-medium text-slate-500">{LEVELS[Math.max(0, Math.min(4, skill.level - 1))]}</span>
               </div>
-              
               <button
                 type="button"
-                onClick={() => removeSkill(skill.id)}
-                className="ml-4 text-gray-400 hover:text-red-500 transition-colors"
-                aria-label="Remove skill"
+                onClick={() => removeWithUndo('skills', skill.id, skill.name || 'Skill')}
+                className="rounded-lg p-1.5 text-slate-400 transition hover:bg-rose-50 hover:text-rose-600"
+                aria-label={`Remove ${skill.name || 'skill'}`}
               >
-                <Trash2 className="h-5 w-5" />
+                <X className="h-4 w-4" />
               </button>
-            </div>
+            </li>
           ))}
-        </div>
+        </ul>
       )}
     </div>
   );

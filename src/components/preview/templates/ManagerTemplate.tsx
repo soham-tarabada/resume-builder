@@ -1,20 +1,17 @@
 import React from 'react';
 import { useResume } from '../../../context/ResumeContext';
+import { formatMonthYear, toBullets } from '../../../utils/format';
 
 const ManagerTemplate: React.FC = () => {
   const { resumeData } = useResume();
   const { personalInfo, education, experience, projects, skills } = resumeData;
   
-  const formatDate = (dateString: string) => {
-    if (!dateString) return '';
-    const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
-  };
+  const formatDate = (value: string) => formatMonthYear(value, 'long');
 
   return (
     <div className="bg-white p-8 h-full text-neutral-800 font-sans text-[13px] leading-tight flex flex-col">
-      <header className="mb-4 text-center border-b-[3px] border-neutral-800 pb-4">
-        <h1 className="text-3xl font-bold uppercase tracking-widest text-neutral-900 mb-1">
+      <header className="mb-4 text-center border-b-[3px] border-accent-800 pb-4">
+        <h1 className="text-3xl font-bold uppercase tracking-widest text-accent-900 mb-1">
           {personalInfo.firstName} {personalInfo.lastName}
         </h1>
         {personalInfo.title && (
@@ -33,14 +30,14 @@ const ManagerTemplate: React.FC = () => {
       <div className="flex-grow flex flex-col gap-4">
         {personalInfo.summary && (
           <section>
-            <h3 className="font-bold text-sm uppercase text-neutral-900 border-b border-neutral-300 mb-2">Profile</h3>
+            <h3 className="font-bold text-sm uppercase text-accent-900 border-b border-accent-300 mb-2">Profile</h3>
             <p className="text-justify">{personalInfo.summary}</p>
           </section>
         )}
 
         {experience.length > 0 && (
           <section>
-            <h3 className="font-bold text-sm uppercase text-neutral-900 border-b border-neutral-300 mb-2">Experience Overview</h3>
+            <h3 className="font-bold text-sm uppercase text-accent-900 border-b border-accent-300 mb-2">Experience Overview</h3>
             <div className="space-y-3">
               {experience.map((exp) => (
                 <div key={exp.id}>
@@ -53,10 +50,29 @@ const ManagerTemplate: React.FC = () => {
                     </span>
                   </div>
                   <ul className="list-disc list-outside ml-4 mt-1 text-justify">
-                    {exp.description.split('\n').filter(line => line.trim()).slice(0, 4).map((line, i) => (
-                      <li key={i}>{line.replace(/^- /, '')}</li>
+                    {toBullets(exp.description).map((line, i) => (
+                      <li key={i}>{line}</li>
                     ))}
                   </ul>
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {projects.length > 0 && (
+          <section>
+            <h3 className="font-bold text-sm uppercase text-accent-900 border-b border-accent-300 mb-2">Key Initiatives</h3>
+            <div className="space-y-2">
+              {projects.map((project) => (
+                <div key={project.id}>
+                  <div className="flex justify-between items-baseline gap-2">
+                    <h4 className="font-bold text-neutral-900 text-sm">{project.title}</h4>
+                    {project.technologies && (
+                      <span className="text-neutral-500 text-right">{project.technologies}</span>
+                    )}
+                  </div>
+                  <p className="text-justify">{project.description}</p>
                 </div>
               ))}
             </div>
@@ -66,7 +82,7 @@ const ManagerTemplate: React.FC = () => {
         <div className="grid grid-cols-2 gap-6 mt-auto">
           {education.length > 0 && (
             <section>
-              <h3 className="font-bold text-sm uppercase text-neutral-900 border-b border-neutral-300 mb-2">Education</h3>
+              <h3 className="font-bold text-sm uppercase text-accent-900 border-b border-accent-300 mb-2">Education</h3>
               <div className="space-y-2">
                 {education.map((edu) => (
                   <div key={edu.id}>
@@ -80,7 +96,7 @@ const ManagerTemplate: React.FC = () => {
 
           {skills.length > 0 && (
             <section>
-              <h3 className="font-bold text-sm uppercase text-neutral-900 border-b border-neutral-300 mb-2">Core Competencies</h3>
+              <h3 className="font-bold text-sm uppercase text-accent-900 border-b border-accent-300 mb-2">Core Competencies</h3>
               <div className="flex flex-wrap gap-x-3 gap-y-1 font-medium text-neutral-700">
                 {skills.map((skill) => (
                   <span key={skill.id}>✓ {skill.name}</span>

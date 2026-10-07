@@ -1,7 +1,7 @@
 {
   "name": "resume-builder-app",
   "private": true,
-  "version": "1.1.0",
+  "version": "2.0.0",
   "homepage": "https://soham-tarabada.github.io/resume-builder/",
   "type": "module",
   "scripts": {

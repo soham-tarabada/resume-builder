@@ -1,24 +1,21 @@
 import React from 'react';
 import { useResume } from '../../../context/ResumeContext';
+import { formatMonthYear } from '../../../utils/format';
 
 const CorporateTemplate: React.FC = () => {
   const { resumeData } = useResume();
   const { personalInfo, education, experience, projects, skills } = resumeData;
   
-  const formatDate = (dateString: string) => {
-    if (!dateString) return '';
-    const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
-  };
+  const formatDate = (value: string) => formatMonthYear(value);
 
   return (
     <div className="bg-white h-full text-gray-800 font-sans">
-      <header className="bg-slate-800 text-white p-8">
+      <header className="bg-accent-800 text-white p-8">
         <h1 className="text-4xl font-light tracking-tight mb-2">
           {personalInfo.firstName} <span className="font-bold">{personalInfo.lastName}</span>
         </h1>
         {personalInfo.title && (
-          <h2 className="text-lg text-slate-300 font-medium mb-4">{personalInfo.title}</h2>
+          <h2 className="text-lg text-accent-300 font-medium mb-4">{personalInfo.title}</h2>
         )}
         <div className="flex flex-wrap gap-4 text-sm text-slate-400">
           {personalInfo.email && <div className="flex items-center gap-1">{personalInfo.email}</div>}
@@ -39,13 +36,13 @@ const CorporateTemplate: React.FC = () => {
 
         {experience.length > 0 && (
           <section className="mb-8">
-            <h3 className="text-xl font-bold text-slate-800 mb-4 flex items-center gap-2">
-              <span className="w-8 h-px bg-slate-800"></span> Experience
+            <h3 className="text-xl font-bold text-accent-800 mb-4 flex items-center gap-2">
+              <span className="w-8 h-px bg-accent-800"></span> Experience
             </h3>
             <div className="space-y-6">
               {experience.map((exp) => (
                 <div key={exp.id} className="relative pl-6 border-l-2 border-slate-200">
-                  <div className="absolute w-3 h-3 bg-slate-800 rounded-full -left-[7px] top-1.5 ring-4 ring-white"></div>
+                  <div className="absolute w-3 h-3 bg-accent-800 rounded-full -left-[7px] top-1.5 ring-4 ring-white"></div>
                   <div className="flex justify-between items-start mb-1">
                     <h4 className="font-bold text-gray-900 text-lg">{exp.position}</h4>
                     <span className="text-sm font-semibold text-slate-600 whitespace-nowrap ml-4 bg-slate-100 px-3 py-1 rounded-full">
@@ -64,8 +61,8 @@ const CorporateTemplate: React.FC = () => {
           <div>
             {education.length > 0 && (
               <section className="mb-8">
-                <h3 className="text-xl font-bold text-slate-800 mb-4 flex items-center gap-2">
-                  <span className="w-8 h-px bg-slate-800"></span> Education
+                <h3 className="text-xl font-bold text-accent-800 mb-4 flex items-center gap-2">
+                  <span className="w-8 h-px bg-accent-800"></span> Education
                 </h3>
                 <div className="space-y-4">
                   {education.map((edu) => (
@@ -83,8 +80,8 @@ const CorporateTemplate: React.FC = () => {
             
             {skills.length > 0 && (
               <section className="mb-8">
-                <h3 className="text-xl font-bold text-slate-800 mb-4 flex items-center gap-2">
-                  <span className="w-8 h-px bg-slate-800"></span> Skills
+                <h3 className="text-xl font-bold text-accent-800 mb-4 flex items-center gap-2">
+                  <span className="w-8 h-px bg-accent-800"></span> Skills
                 </h3>
                 <div className="flex flex-wrap gap-2">
                   {skills.map((skill) => (
@@ -100,8 +97,8 @@ const CorporateTemplate: React.FC = () => {
           <div>
             {projects.length > 0 && (
               <section className="mb-8">
-                <h3 className="text-xl font-bold text-slate-800 mb-4 flex items-center gap-2">
-                  <span className="w-8 h-px bg-slate-800"></span> Projects
+                <h3 className="text-xl font-bold text-accent-800 mb-4 flex items-center gap-2">
+                  <span className="w-8 h-px bg-accent-800"></span> Projects
                 </h3>
                 <div className="space-y-4">
                   {projects.map((project) => (

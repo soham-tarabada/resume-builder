@@ -1,6 +1,8 @@
 import React from 'react';
 import { useResume } from '../../context/ResumeContext';
 import FormField from '../ui/FormField';
+import SectionHeader from '../ui/SectionHeader';
+import TextAreaField from '../ui/TextAreaField';
 
 const PersonalInfoForm: React.FC = () => {
   const { resumeData, updatePersonalInfo } = useResume();
@@ -13,113 +15,53 @@ const PersonalInfoForm: React.FC = () => {
 
   return (
     <div className="space-y-6 animate-fadeIn">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <SectionHeader title="Personal details" description="Your headline and how recruiters will reach you." />
+
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <FormField label="First name" name="firstName" value={personalInfo.firstName} onChange={handleChange} placeholder="Jordan" required />
+        <FormField label="Last name" name="lastName" value={personalInfo.lastName} onChange={handleChange} placeholder="Avery" required />
         <FormField
-          label="First Name"
-          name="firstName"
-          value={personalInfo.firstName}
+          label="Professional title"
+          name="title"
+          value={personalInfo.title}
           onChange={handleChange}
-          placeholder="John"
-          required
+          placeholder="Senior Product Engineer"
+          className="sm:col-span-2"
         />
-        <FormField
-          label="Last Name"
-          name="lastName"
-          value={personalInfo.lastName}
-          onChange={handleChange}
-          placeholder="Doe"
-          required
-        />
+        <FormField label="Email" name="email" type="email" value={personalInfo.email} onChange={handleChange} placeholder="jordan@example.com" required />
+        <FormField label="Phone" name="phone" type="tel" value={personalInfo.phone} onChange={handleChange} placeholder="(415) 555-0142" />
+        <FormField label="City" name="city" value={personalInfo.city} onChange={handleChange} placeholder="San Francisco" />
+        <FormField label="State / Province" name="state" value={personalInfo.state} onChange={handleChange} placeholder="CA" />
+        <FormField label="Country" name="country" value={personalInfo.country} onChange={handleChange} placeholder="USA" className="sm:col-span-2" />
       </div>
 
-      <FormField
-        label="Professional Title"
-        name="title"
-        value={personalInfo.title}
-        onChange={handleChange}
-        placeholder="Senior Software Engineer"
-      />
-
-      <FormField
-        label="Email"
-        name="email"
-        type="email"
-        value={personalInfo.email}
-        onChange={handleChange}
-        placeholder="john.doe@example.com"
-        required
-      />
-
-      <FormField
-        label="Phone"
-        name="phone"
-        value={personalInfo.phone}
-        onChange={handleChange}
-        placeholder="(123) 456-7890"
-      />
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <FormField
-          label="City"
-          name="city"
-          value={personalInfo.city}
-          onChange={handleChange}
-          placeholder="New York"
-        />
-        <FormField
-          label="State/Province"
-          name="state"
-          value={personalInfo.state}
-          onChange={handleChange}
-          placeholder="NY"
-        />
+      <div className="rounded-2xl border border-slate-200 bg-slate-50/60 p-4 sm:p-5">
+        <p className="mb-3 text-[13px] font-semibold text-slate-700">Online presence</p>
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <FormField label="LinkedIn" name="linkedin" type="url" value={personalInfo.linkedin} onChange={handleChange} placeholder="linkedin.com/in/jordan" />
+          <FormField label="GitHub" name="github" type="url" value={personalInfo.github} onChange={handleChange} placeholder="github.com/jordan" />
+          <FormField
+            label="Portfolio website"
+            name="website"
+            type="url"
+            value={personalInfo.website}
+            onChange={handleChange}
+            placeholder="jordan.dev"
+            className="sm:col-span-2"
+          />
+        </div>
       </div>
 
-      <FormField
-        label="Country"
-        name="country"
-        value={personalInfo.country}
+      <TextAreaField
+        label="Professional summary"
+        name="summary"
+        value={personalInfo.summary}
         onChange={handleChange}
-        placeholder="United States"
+        rows={5}
+        wordRange={[25, 90]}
+        placeholder="Product-minded engineer with 8 years of experience shipping web platforms used by millions…"
+        hint="Formula: who you are + your strongest skills + the impact you deliver, in 2–3 sentences."
       />
-
-      <FormField
-        label="LinkedIn"
-        name="linkedin"
-        value={personalInfo.linkedin}
-        onChange={handleChange}
-        placeholder="https://linkedin.com/in/johndoe"
-      />
-
-      <FormField
-        label="GitHub"
-        name="github"
-        value={personalInfo.github}
-        onChange={handleChange}
-        placeholder="https://github.com/johndoe"
-      />
-
-      <FormField
-        label="Portfolio Website"
-        name="website"
-        value={personalInfo.website}
-        onChange={handleChange}
-        placeholder="https://johndoe.com"
-      />
-
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
-          Professional Summary
-        </label>
-        <textarea
-          name="summary"
-          value={personalInfo.summary}
-          onChange={handleChange}
-          rows={4}
-          className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-          placeholder="Experienced software engineer with 5+ years of experience in web development..."
-        />
-      </div>
     </div>
   );
 };

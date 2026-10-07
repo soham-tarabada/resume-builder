@@ -1,15 +1,12 @@
 import React from 'react';
 import { useResume } from '../../../context/ResumeContext';
+import { formatMonthYear, toBullets } from '../../../utils/format';
 
 const AnalystTemplate: React.FC = () => {
   const { resumeData } = useResume();
   const { personalInfo, education, experience, projects, skills } = resumeData;
   
-  const formatDate = (dateString: string) => {
-    if (!dateString) return '';
-    const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', { month: '2-digit', year: 'numeric' });
-  };
+  const formatDate = (value: string) => formatMonthYear(value, 'numeric');
 
   return (
     <div className="bg-white p-8 h-full text-slate-800 font-sans tracking-tight">
@@ -19,7 +16,7 @@ const AnalystTemplate: React.FC = () => {
             {personalInfo.firstName} {personalInfo.lastName}
           </h1>
           {personalInfo.title && (
-            <div className="text-sm font-bold text-teal-700 uppercase tracking-widest mt-1">
+            <div className="text-sm font-bold text-accent-700 uppercase tracking-widest mt-1">
               {personalInfo.title}
             </div>
           )}
@@ -36,7 +33,7 @@ const AnalystTemplate: React.FC = () => {
 
       {personalInfo.summary && (
         <section className="mb-6">
-          <h2 className="text-sm font-bold uppercase text-slate-900 mb-2 border-l-4 border-teal-600 pl-2">Summary Overview</h2>
+          <h2 className="text-sm font-bold uppercase text-slate-900 mb-2 border-l-4 border-accent-600 pl-2">Summary Overview</h2>
           <p className="text-sm text-slate-700 leading-relaxed tabular-nums">
             {personalInfo.summary}
           </p>
@@ -45,11 +42,11 @@ const AnalystTemplate: React.FC = () => {
 
       {skills.length > 0 && (
         <section className="mb-6">
-          <h2 className="text-sm font-bold uppercase text-slate-900 mb-2 border-l-4 border-teal-600 pl-2">Key Competencies</h2>
+          <h2 className="text-sm font-bold uppercase text-slate-900 mb-2 border-l-4 border-accent-600 pl-2">Key Competencies</h2>
           <div className="flex flex-wrap gap-x-6 gap-y-2 text-sm font-medium text-slate-700">
             {skills.map((skill) => (
               <div key={skill.id} className="flex items-center">
-                <span className="w-1.5 h-1.5 bg-teal-500 rounded-full mr-2"></span>
+                <span className="w-1.5 h-1.5 bg-accent-500 rounded-full mr-2"></span>
                 {skill.name}
               </div>
             ))}
@@ -59,7 +56,7 @@ const AnalystTemplate: React.FC = () => {
 
       {experience.length > 0 && (
         <section className="mb-6">
-          <h2 className="text-sm font-bold uppercase text-slate-900 mb-3 border-l-4 border-teal-600 pl-2">Professional Experience</h2>
+          <h2 className="text-sm font-bold uppercase text-slate-900 mb-3 border-l-4 border-accent-600 pl-2">Professional Experience</h2>
           <div className="space-y-4">
             {experience.map((exp) => (
               <div key={exp.id} className="grid grid-cols-12 gap-4">
@@ -68,10 +65,10 @@ const AnalystTemplate: React.FC = () => {
                 </div>
                 <div className="col-span-9">
                   <h3 className="font-bold text-slate-900">{exp.position}</h3>
-                  <div className="text-sm font-semibold text-teal-700 mb-1">{exp.company}{exp.location && ` • ${exp.location}`}</div>
+                  <div className="text-sm font-semibold text-accent-700 mb-1">{exp.company}{exp.location && ` • ${exp.location}`}</div>
                   <ul className="list-disc list-outside ml-4 text-sm text-slate-700 tabular-nums leading-relaxed">
-                    {exp.description.split('\n').filter(line => line.trim()).map((line, i) => (
-                      <li key={i}>{line.replace(/^- /, '')}</li>
+                    {toBullets(exp.description).map((line, i) => (
+                      <li key={i}>{line}</li>
                     ))}
                   </ul>
                 </div>
@@ -83,7 +80,7 @@ const AnalystTemplate: React.FC = () => {
 
       {projects.length > 0 && (
         <section className="mb-6">
-          <h2 className="text-sm font-bold uppercase text-slate-900 mb-3 border-l-4 border-teal-600 pl-2">Analytical Projects</h2>
+          <h2 className="text-sm font-bold uppercase text-slate-900 mb-3 border-l-4 border-accent-600 pl-2">Analytical Projects</h2>
           <div className="space-y-4">
             {projects.map((project) => (
               <div key={project.id} className="grid grid-cols-12 gap-4">
@@ -102,12 +99,12 @@ const AnalystTemplate: React.FC = () => {
 
       {education.length > 0 && (
         <section>
-          <h2 className="text-sm font-bold uppercase text-slate-900 mb-3 border-l-4 border-teal-600 pl-2">Education & Certifications</h2>
+          <h2 className="text-sm font-bold uppercase text-slate-900 mb-3 border-l-4 border-accent-600 pl-2">Education & Certifications</h2>
           <div className="space-y-3">
             {education.map((edu) => (
               <div key={edu.id} className="grid grid-cols-12 gap-4">
                 <div className="col-span-3 text-sm font-mono text-slate-500">
-                  {new Date(edu.endDate).getFullYear() || ''}
+                  {formatMonthYear(edu.endDate, 'year')}
                 </div>
                 <div className="col-span-9">
                   <h3 className="font-bold text-slate-900">{edu.degree}{edu.fieldOfStudy ? `, ${edu.fieldOfStudy}` : ''}</h3>

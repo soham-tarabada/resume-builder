@@ -1,15 +1,12 @@
 import React from 'react';
 import { useResume } from '../../../context/ResumeContext';
+import { formatMonthYear } from '../../../utils/format';
 
 const DeveloperTemplate: React.FC = () => {
   const { resumeData } = useResume();
   const { personalInfo, education, experience, projects, skills } = resumeData;
   
-  const formatDate = (dateString: string) => {
-    if (!dateString) return '';
-    const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
-  };
+  const formatDate = (value: string) => formatMonthYear(value);
 
   return (
     <div className="bg-white p-8 h-full text-gray-800 font-mono text-sm leading-snug">
@@ -18,7 +15,7 @@ const DeveloperTemplate: React.FC = () => {
           &lt;{personalInfo.firstName} {personalInfo.lastName} /&gt;
         </h1>
         {personalInfo.title && (
-          <p className="text-lg text-blue-600 font-bold mb-4">{personalInfo.title}</p>
+          <p className="text-lg text-accent-600 font-bold mb-4">{personalInfo.title}</p>
         )}
         <div className="grid grid-cols-2 gap-2 text-xs text-gray-600">
           {personalInfo.email && <div>✉ {personalInfo.email}</div>}
@@ -42,7 +39,7 @@ const DeveloperTemplate: React.FC = () => {
           <h2 className="text-lg font-bold text-gray-900 mb-3 border-b-2 border-gray-200">## Skills</h2>
           <div className="flex flex-wrap gap-2">
             {skills.map((skill) => (
-              <span key={skill.id} className="bg-blue-100 text-blue-800 px-2 py-1 rounded-sm text-xs font-semibold">
+              <span key={skill.id} className="bg-accent-100 text-accent-800 px-2 py-1 rounded-sm text-xs font-semibold">
                 {skill.name}
               </span>
             ))}
@@ -59,7 +56,7 @@ const DeveloperTemplate: React.FC = () => {
                 <div className="flex justify-between items-start mb-1">
                   <div>
                     <h3 className="font-bold text-gray-900">{exp.position}</h3>
-                    <div className="text-blue-600 font-medium">{exp.company}{exp.location ? ` | ${exp.location}` : ''}</div>
+                    <div className="text-accent-600 font-medium">{exp.company}{exp.location ? ` | ${exp.location}` : ''}</div>
                   </div>
                   <div className="text-xs text-gray-500 font-semibold text-right whitespace-nowrap ml-4">
                     [{formatDate(exp.startDate)} - {exp.isCurrentPosition ? 'Present' : formatDate(exp.endDate)}]
@@ -81,7 +78,7 @@ const DeveloperTemplate: React.FC = () => {
                 <div className="flex justify-between items-center mb-2">
                   <h3 className="font-bold text-gray-900">{project.title}</h3>
                   {project.link && (
-                    <span className="text-xs text-blue-500 underline">{project.link}</span>
+                    <span className="text-xs text-accent-500 underline">{project.link}</span>
                   )}
                 </div>
                 <p className="text-xs text-gray-700 mb-2">{project.description}</p>

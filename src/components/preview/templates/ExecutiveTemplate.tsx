@@ -1,20 +1,17 @@
 import React from 'react';
 import { useResume } from '../../../context/ResumeContext';
+import { formatMonthYear } from '../../../utils/format';
 
 const ExecutiveTemplate: React.FC = () => {
   const { resumeData } = useResume();
   const { personalInfo, education, experience, projects, skills } = resumeData;
   
-  const formatDate = (dateString: string) => {
-    if (!dateString) return '';
-    const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
-  };
+  const formatDate = (value: string) => formatMonthYear(value);
 
   return (
     <div className="bg-white p-8 h-full text-gray-900 font-serif">
-      <header className="mb-6 border-b-2 border-gray-900 pb-4 text-center">
-        <h1 className="text-4xl font-bold uppercase tracking-wider mb-2">
+      <header className="mb-6 border-b-2 border-accent-900 pb-4 text-center">
+        <h1 className="text-accent-900 text-4xl font-bold uppercase tracking-wider mb-2">
           {personalInfo.firstName} {personalInfo.lastName}
         </h1>
         {personalInfo.title && (
@@ -38,7 +35,7 @@ const ExecutiveTemplate: React.FC = () => {
 
       {experience.length > 0 && (
         <section className="mb-6">
-          <h3 className="text-lg font-bold uppercase border-b border-gray-300 mb-3 pb-1">Professional Experience</h3>
+          <h3 className="text-accent-900 text-lg font-bold uppercase border-b border-accent-300 mb-3 pb-1">Professional Experience</h3>
           <div className="space-y-4">
             {experience.map((exp) => (
               <div key={exp.id}>
@@ -60,7 +57,7 @@ const ExecutiveTemplate: React.FC = () => {
 
       {education.length > 0 && (
         <section className="mb-6">
-          <h3 className="text-lg font-bold uppercase border-b border-gray-300 mb-3 pb-1">Education</h3>
+          <h3 className="text-accent-900 text-lg font-bold uppercase border-b border-accent-300 mb-3 pb-1">Education</h3>
           <div className="space-y-3">
             {education.map((edu) => (
               <div key={edu.id}>
@@ -80,7 +77,7 @@ const ExecutiveTemplate: React.FC = () => {
 
       {projects.length > 0 && (
         <section className="mb-6">
-          <h3 className="text-lg font-bold uppercase border-b border-gray-300 mb-3 pb-1">Key Projects</h3>
+          <h3 className="text-accent-900 text-lg font-bold uppercase border-b border-accent-300 mb-3 pb-1">Key Projects</h3>
           <div className="space-y-3">
             {projects.map((project) => (
               <div key={project.id}>
@@ -102,7 +99,7 @@ const ExecutiveTemplate: React.FC = () => {
 
       {skills.length > 0 && (
         <section>
-          <h3 className="text-lg font-bold uppercase border-b border-gray-300 mb-3 pb-1">Core Competencies</h3>
+          <h3 className="text-accent-900 text-lg font-bold uppercase border-b border-accent-300 mb-3 pb-1">Core Competencies</h3>
           <div className="text-sm leading-relaxed text-gray-800">
             {skills.map((skill) => skill.name).join(' • ')}
           </div>

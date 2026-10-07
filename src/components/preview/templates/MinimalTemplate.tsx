@@ -1,21 +1,18 @@
 import React from 'react';
 import { useResume } from '../../../context/ResumeContext';
+import { formatMonthYear } from '../../../utils/format';
 
 const MinimalTemplate: React.FC = () => {
   const { resumeData } = useResume();
   const { personalInfo, education, experience, projects, skills } = resumeData;
   
-  const formatDate = (dateString: string) => {
-    if (!dateString) return '';
-    const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
-  };
+  const formatDate = (value: string) => formatMonthYear(value);
 
   return (
     <div className="bg-white p-8 h-full text-gray-800 font-sans">
       {/* Header */}
       <header className="mb-8">
-        <h1 className="text-3xl font-light text-gray-900 mb-1 tracking-wide">
+        <h1 className="text-3xl font-light text-accent-900 mb-1 tracking-wide">
           {personalInfo.firstName} {personalInfo.lastName}
         </h1>
         
@@ -48,15 +45,15 @@ const MinimalTemplate: React.FC = () => {
       {/* Experience Section */}
       {experience.length > 0 && (
         <section className="mb-8">
-          <h2 className="text-lg font-normal text-gray-900 uppercase tracking-widest mb-4">
+          <h2 className="text-lg font-normal text-accent-900 uppercase tracking-widest mb-4">
             Experience
           </h2>
           <div className="space-y-6">
             {experience.map((exp) => (
               <div key={exp.id} className="mb-4">
-                <div className="flex flex-col md:flex-row md:justify-between md:items-baseline mb-1">
+                <div className="flex flex-row justify-between items-baseline gap-3 mb-1">
                   <h3 className="font-medium text-gray-900">{exp.position}</h3>
-                  <div className="text-sm text-gray-500 md:text-right">
+                  <div className="text-sm text-gray-500 text-right">
                     <div>{exp.company}{exp.location ? `, ${exp.location}` : ''}</div>
                     <div>
                       {formatDate(exp.startDate)} - {exp.isCurrentPosition ? 'Present' : formatDate(exp.endDate)}
@@ -73,13 +70,13 @@ const MinimalTemplate: React.FC = () => {
       {/* Education Section */}
       {education.length > 0 && (
         <section className="mb-8">
-          <h2 className="text-lg font-normal text-gray-900 uppercase tracking-widest mb-4">
+          <h2 className="text-lg font-normal text-accent-900 uppercase tracking-widest mb-4">
             Education
           </h2>
           <div className="space-y-4">
             {education.map((edu) => (
               <div key={edu.id} className="mb-4">
-                <div className="flex flex-col md:flex-row md:justify-between md:items-baseline mb-1">
+                <div className="flex flex-row justify-between items-baseline gap-3 mb-1">
                   <div>
                     <h3 className="font-medium text-gray-900">{edu.institution}</h3>
                     <p className="text-gray-700">{edu.degree}{edu.fieldOfStudy ? `, ${edu.fieldOfStudy}` : ''}</p>
@@ -100,13 +97,13 @@ const MinimalTemplate: React.FC = () => {
       {/* Projects Section */}
       {projects.length > 0 && (
         <section className="mb-8">
-          <h2 className="text-lg font-normal text-gray-900 uppercase tracking-widest mb-4">
+          <h2 className="text-lg font-normal text-accent-900 uppercase tracking-widest mb-4">
             Projects
           </h2>
           <div className="space-y-4">
             {projects.map((project) => (
               <div key={project.id} className="mb-4">
-                <div className="flex flex-col md:flex-row md:justify-between md:items-baseline mb-1">
+                <div className="flex flex-row justify-between items-baseline gap-3 mb-1">
                   <h3 className="font-medium text-gray-900">{project.title}</h3>
                   {project.link && (
                     <a 
@@ -134,7 +131,7 @@ const MinimalTemplate: React.FC = () => {
       {/* Skills Section */}
       {skills.length > 0 && (
         <section>
-          <h2 className="text-lg font-normal text-gray-900 uppercase tracking-widest mb-4">
+          <h2 className="text-lg font-normal text-accent-900 uppercase tracking-widest mb-4">
             Skills
           </h2>
           <div className="flex flex-wrap gap-x-6 gap-y-2">

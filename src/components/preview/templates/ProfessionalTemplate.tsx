@@ -1,28 +1,25 @@
 import React from 'react';
 import { useResume } from '../../../context/ResumeContext';
+import { formatMonthYear } from '../../../utils/format';
 
 const ProfessionalTemplate: React.FC = () => {
   const { resumeData } = useResume();
   const { personalInfo, education, experience, projects, skills } = resumeData;
   
-  const formatDate = (dateString: string) => {
-    if (!dateString) return '';
-    const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
-  };
+  const formatDate = (value: string) => formatMonthYear(value);
 
   return (
     <div className="bg-white h-full text-gray-800 font-sans">
       {/* Header with colored background */}
-      <header className="bg-blue-700 text-white p-8 mb-6">
+      <header className="bg-accent-700 text-white p-8 mb-6">
         <h1 className="text-3xl font-bold mb-1">
           {personalInfo.firstName} {personalInfo.lastName}
         </h1>
         {personalInfo.title && (
-          <p className="text-xl text-blue-100 mb-4">{personalInfo.title}</p>
+          <p className="text-xl text-accent-100 mb-4">{personalInfo.title}</p>
         )}
         
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm text-blue-100">
+        <div className="grid grid-cols-2 gap-2 text-sm text-accent-100">
           {personalInfo.email && <div>Email: {personalInfo.email}</div>}
           {personalInfo.phone && <div>Phone: {personalInfo.phone}</div>}
           {(personalInfo.city || personalInfo.state || personalInfo.country) && (
@@ -42,7 +39,7 @@ const ProfessionalTemplate: React.FC = () => {
         {/* Professional Summary */}
         {personalInfo.summary && (
           <section className="mb-6">
-            <h2 className="text-lg font-bold text-blue-700 mb-3">
+            <h2 className="text-lg font-bold text-accent-700 mb-3">
               Professional Summary
             </h2>
             <p className="text-gray-700 leading-relaxed">{personalInfo.summary}</p>
@@ -52,13 +49,13 @@ const ProfessionalTemplate: React.FC = () => {
         {/* Experience Section */}
         {experience.length > 0 && (
           <section className="mb-6">
-            <h2 className="text-lg font-bold text-blue-700 mb-3">
+            <h2 className="text-lg font-bold text-accent-700 mb-3">
               Professional Experience
             </h2>
             <div className="space-y-5">
               {experience.map((exp) => (
                 <div key={exp.id} className="mb-4">
-                  <div className="flex flex-col md:flex-row md:justify-between md:items-center mb-2">
+                  <div className="flex flex-row justify-between items-center gap-3 mb-2">
                     <h3 className="font-bold text-gray-800 text-lg">{exp.position}</h3>
                     <span className="text-sm text-gray-600">
                       {formatDate(exp.startDate)} - {exp.isCurrentPosition ? 'Present' : formatDate(exp.endDate)}
@@ -72,12 +69,12 @@ const ProfessionalTemplate: React.FC = () => {
           </section>
         )}
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-2 gap-6">
           {/* Education Section */}
           <div>
             {education.length > 0 && (
               <section className="mb-6">
-                <h2 className="text-lg font-bold text-blue-700 mb-3">
+                <h2 className="text-lg font-bold text-accent-700 mb-3">
                   Education
                 </h2>
                 <div className="space-y-4">
@@ -100,7 +97,7 @@ const ProfessionalTemplate: React.FC = () => {
             {/* Skills Section */}
             {skills.length > 0 && (
               <section>
-                <h2 className="text-lg font-bold text-blue-700 mb-3">
+                <h2 className="text-lg font-bold text-accent-700 mb-3">
                   Skills
                 </h2>
                 <div className="grid grid-cols-2 gap-1">
@@ -112,7 +109,7 @@ const ProfessionalTemplate: React.FC = () => {
                           <div
                             key={i}
                             className={`w-2 h-2 rounded-full mx-0.5 ${
-                              i < skill.level ? 'bg-blue-600' : 'bg-gray-300'
+                              i < skill.level ? 'bg-accent-600' : 'bg-gray-300'
                             }`}
                           />
                         ))}
@@ -128,7 +125,7 @@ const ProfessionalTemplate: React.FC = () => {
           <div>
             {projects.length > 0 && (
               <section>
-                <h2 className="text-lg font-bold text-blue-700 mb-3">
+                <h2 className="text-lg font-bold text-accent-700 mb-3">
                   Projects
                 </h2>
                 <div className="space-y-4">
@@ -146,7 +143,7 @@ const ProfessionalTemplate: React.FC = () => {
                           href={project.link} 
                           target="_blank" 
                           rel="noopener noreferrer"
-                          className="text-sm text-blue-600 hover:underline"
+                          className="text-sm text-accent-600 hover:underline"
                         >
                           View Project
                         </a>

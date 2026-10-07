@@ -1,21 +1,18 @@
 import React from 'react';
 import { useResume } from '../../../context/ResumeContext';
+import { formatMonthYear } from '../../../utils/format';
 
 const ClassicTemplate: React.FC = () => {
   const { resumeData } = useResume();
   const { personalInfo, education, experience, projects, skills } = resumeData;
   
-  const formatDate = (dateString: string) => {
-    if (!dateString) return '';
-    const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
-  };
+  const formatDate = (value: string) => formatMonthYear(value);
 
   return (
     <div className="bg-white p-8 h-full text-gray-800 font-serif">
       {/* Header */}
-      <header className="text-center mb-6 border-b-2 border-gray-300 pb-4">
-        <h1 className="text-3xl font-bold text-gray-900 uppercase tracking-wider mb-1">
+      <header className="text-center mb-6 border-b-2 border-accent-300 pb-4">
+        <h1 className="text-3xl font-bold text-accent-900 uppercase tracking-wider mb-1">
           {personalInfo.firstName} {personalInfo.lastName}
         </h1>
         {personalInfo.title && (
@@ -41,7 +38,7 @@ const ClassicTemplate: React.FC = () => {
       {/* Professional Summary */}
       {personalInfo.summary && (
         <section className="mb-6">
-          <h2 className="text-lg font-bold text-gray-900 uppercase tracking-wider border-b border-gray-300 pb-1 mb-3">
+          <h2 className="text-lg font-bold text-accent-900 uppercase tracking-wider border-b border-accent-300 pb-1 mb-3">
             Professional Summary
           </h2>
           <p className="text-gray-700 leading-relaxed">{personalInfo.summary}</p>
@@ -51,7 +48,7 @@ const ClassicTemplate: React.FC = () => {
       {/* Experience Section */}
       {experience.length > 0 && (
         <section className="mb-6">
-          <h2 className="text-lg font-bold text-gray-900 uppercase tracking-wider border-b border-gray-300 pb-1 mb-3">
+          <h2 className="text-lg font-bold text-accent-900 uppercase tracking-wider border-b border-accent-300 pb-1 mb-3">
             Professional Experience
           </h2>
           <div className="space-y-4">
@@ -74,7 +71,7 @@ const ClassicTemplate: React.FC = () => {
       {/* Education Section */}
       {education.length > 0 && (
         <section className="mb-6">
-          <h2 className="text-lg font-bold text-gray-900 uppercase tracking-wider border-b border-gray-300 pb-1 mb-3">
+          <h2 className="text-lg font-bold text-accent-900 uppercase tracking-wider border-b border-accent-300 pb-1 mb-3">
             Education
           </h2>
           <div className="space-y-4">
@@ -99,7 +96,7 @@ const ClassicTemplate: React.FC = () => {
       {/* Projects Section */}
       {projects.length > 0 && (
         <section className="mb-6">
-          <h2 className="text-lg font-bold text-gray-900 uppercase tracking-wider border-b border-gray-300 pb-1 mb-3">
+          <h2 className="text-lg font-bold text-accent-900 uppercase tracking-wider border-b border-accent-300 pb-1 mb-3">
             Projects
           </h2>
           <div className="space-y-4">
@@ -133,7 +130,7 @@ const ClassicTemplate: React.FC = () => {
       {/* Skills Section */}
       {skills.length > 0 && (
         <section>
-          <h2 className="text-lg font-bold text-gray-900 uppercase tracking-wider border-b border-gray-300 pb-1 mb-3">
+          <h2 className="text-lg font-bold text-accent-900 uppercase tracking-wider border-b border-accent-300 pb-1 mb-3">
             Skills
           </h2>
           <div className="flex flex-wrap">
