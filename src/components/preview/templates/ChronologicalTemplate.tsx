@@ -1,20 +1,17 @@
 import React from 'react';
 import { useResume } from '../../../context/ResumeContext';
+import { formatMonthYear } from '../../../utils/format';
 
 const ChronologicalTemplate: React.FC = () => {
   const { resumeData } = useResume();
   const { personalInfo, education, experience, projects, skills } = resumeData;
   
-  const formatDate = (dateString: string) => {
-    if (!dateString) return '';
-    const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
-  };
+  const formatDate = (value: string) => formatMonthYear(value);
 
   return (
     <div className="bg-white p-8 h-full text-gray-800 font-sans">
-      <header className="mb-8 border-b-2 border-gray-800 pb-6 text-center">
-        <h1 className="text-3xl font-bold uppercase tracking-widest text-gray-900 mb-2">
+      <header className="mb-8 border-b-2 border-accent-800 pb-6 text-center">
+        <h1 className="text-3xl font-bold uppercase tracking-widest text-accent-900 mb-2">
           {personalInfo.firstName} {personalInfo.lastName}
         </h1>
         {personalInfo.title && (
@@ -41,7 +38,7 @@ const ChronologicalTemplate: React.FC = () => {
 
       {experience.length > 0 && (
         <section className="mb-8 relative auto-rows-min">
-          <h2 className="text-xl font-bold uppercase tracking-widest text-gray-900 mb-6 bg-white inline-block pr-4 relative z-10 w-full border-b border-gray-300 pb-2">
+          <h2 className="text-xl font-bold uppercase tracking-widest text-accent-900 mb-6 bg-white inline-block pr-4 relative z-10 w-full border-b border-accent-300 pb-2">
             Professional History
           </h2>
           <div className="relative pl-4">
@@ -51,7 +48,7 @@ const ChronologicalTemplate: React.FC = () => {
                 <div key={exp.id} className="relative">
                   <div className="absolute w-2 h-2 rounded-full bg-gray-800 -left-[14px] top-1.5 ring-4 ring-white"></div>
                   <div className="flex justify-between items-baseline mb-1">
-                    <h3 className="font-bold text-gray-900 text-lg">{exp.position}</h3>
+                    <h3 className="font-bold text-accent-900 text-lg">{exp.position}</h3>
                     <div className="text-sm font-semibold text-gray-600 ml-4">
                       {formatDate(exp.startDate)} - {exp.isCurrentPosition ? 'Present' : formatDate(exp.endDate)}
                     </div>
@@ -69,13 +66,13 @@ const ChronologicalTemplate: React.FC = () => {
         <div>
           {education.length > 0 && (
             <section className="mb-8">
-              <h2 className="text-xl font-bold uppercase tracking-widest text-gray-900 mb-4 border-b border-gray-300 pb-2">
+              <h2 className="text-xl font-bold uppercase tracking-widest text-accent-900 mb-4 border-b border-accent-300 pb-2">
                 Education
               </h2>
               <div className="space-y-4">
                 {education.map((edu) => (
                   <div key={edu.id}>
-                    <h3 className="font-bold text-gray-900">{edu.institution}</h3>
+                    <h3 className="font-bold text-accent-900">{edu.institution}</h3>
                     <div className="text-gray-700 font-medium">{edu.degree}{edu.fieldOfStudy ? `, ${edu.fieldOfStudy}` : ''}</div>
                     <div className="text-sm text-gray-500 mt-1">
                       {formatDate(edu.startDate)} - {formatDate(edu.endDate)}
@@ -91,7 +88,7 @@ const ChronologicalTemplate: React.FC = () => {
         <div>
           {skills.length > 0 && (
             <section className="mb-8">
-              <h2 className="text-xl font-bold uppercase tracking-widest text-gray-900 mb-4 border-b border-gray-300 pb-2">
+              <h2 className="text-xl font-bold uppercase tracking-widest text-accent-900 mb-4 border-b border-accent-300 pb-2">
                 Skills & Abilities
               </h2>
               <div className="flex flex-col gap-2">
@@ -109,13 +106,13 @@ const ChronologicalTemplate: React.FC = () => {
 
       {projects.length > 0 && (
         <section>
-          <h2 className="text-xl font-bold uppercase tracking-widest text-gray-900 mb-4 border-b border-gray-300 pb-2">
+          <h2 className="text-xl font-bold uppercase tracking-widest text-accent-900 mb-4 border-b border-accent-300 pb-2">
             Selected Projects
           </h2>
           <div className="grid grid-cols-2 gap-4">
             {projects.map((project) => (
               <div key={project.id} className="bg-gray-50 p-4 rounded border border-gray-100">
-                <h3 className="font-bold text-gray-900">{project.title}</h3>
+                <h3 className="font-bold text-accent-900">{project.title}</h3>
                 {project.link && <a href={project.link} className="text-sm text-gray-500 break-all">{project.link}</a>}
                 <p className="text-sm text-gray-600 mt-2 mb-2">{project.description}</p>
                 {project.technologies && (

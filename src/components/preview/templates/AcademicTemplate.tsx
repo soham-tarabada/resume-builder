@@ -1,20 +1,17 @@
 import React from 'react';
 import { useResume } from '../../../context/ResumeContext';
+import { formatMonthYear } from '../../../utils/format';
 
 const AcademicTemplate: React.FC = () => {
   const { resumeData } = useResume();
   const { personalInfo, education, experience, projects, skills } = resumeData;
   
-  const formatDate = (dateString: string) => {
-    if (!dateString) return '';
-    const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
-  };
+  const formatDate = (value: string) => formatMonthYear(value, 'long');
 
   return (
     <div className="bg-white p-10 h-full text-gray-900 font-serif leading-relaxed">
       <header className="mb-8 text-center">
-        <h1 className="text-3xl font-normal mb-2 tracking-wide text-black">
+        <h1 className="text-3xl font-normal mb-2 tracking-wide text-accent-900">
           {personalInfo.firstName} {personalInfo.lastName}
         </h1>
         <div className="text-sm text-gray-700 flex flex-wrap justify-center gap-x-3 gap-y-1">
@@ -30,7 +27,7 @@ const AcademicTemplate: React.FC = () => {
       {/* Education First for Academic Template */}
       {education.length > 0 && (
         <section className="mb-6">
-          <h2 className="text-xl font-bold uppercase tracking-widest text-black border-b border-black mb-4 pb-1">
+          <h2 className="text-xl font-bold uppercase tracking-widest text-accent-900 border-b border-accent-900 mb-4 pb-1">
             Education
           </h2>
           <div className="space-y-4">
@@ -52,7 +49,7 @@ const AcademicTemplate: React.FC = () => {
 
       {experience.length > 0 && (
         <section className="mb-6">
-          <h2 className="text-xl font-bold uppercase tracking-widest text-black border-b border-black mb-4 pb-1">
+          <h2 className="text-xl font-bold uppercase tracking-widest text-accent-900 border-b border-accent-900 mb-4 pb-1">
             Experience
           </h2>
           <div className="space-y-5">
@@ -74,7 +71,7 @@ const AcademicTemplate: React.FC = () => {
 
       {projects.length > 0 && (
         <section className="mb-6">
-          <h2 className="text-xl font-bold uppercase tracking-widest text-black border-b border-black mb-4 pb-1">
+          <h2 className="text-xl font-bold uppercase tracking-widest text-accent-900 border-b border-accent-900 mb-4 pb-1">
             Research & Projects
           </h2>
           <div className="space-y-4">
@@ -92,7 +89,7 @@ const AcademicTemplate: React.FC = () => {
 
       {skills.length > 0 && (
         <section className="mb-6">
-          <h2 className="text-xl font-bold uppercase tracking-widest text-black border-b border-black mb-4 pb-1">
+          <h2 className="text-xl font-bold uppercase tracking-widest text-accent-900 border-b border-accent-900 mb-4 pb-1">
             Skills & Competencies
           </h2>
           <p className="text-sm text-gray-800 leading-relaxed">

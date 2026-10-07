@@ -1,21 +1,18 @@
 import React from 'react';
 import { useResume } from '../../../context/ResumeContext';
+import { formatMonthYear } from '../../../utils/format';
 
 const EngineeringTemplate: React.FC = () => {
   const { resumeData } = useResume();
   const { personalInfo, education, experience, projects, skills } = resumeData;
   
-  const formatDate = (dateString: string) => {
-    if (!dateString) return '';
-    const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
-  };
+  const formatDate = (value: string) => formatMonthYear(value);
 
   return (
     <div className="bg-white p-8 h-full text-slate-800 font-sans border-8 border-slate-800">
-      <header className="mb-6 flex justify-between items-center bg-slate-100 p-4 border-2 border-slate-800">
+      <header className="mb-6 flex justify-between items-center bg-accent-100 p-4 border-2 border-accent-800">
         <div>
-          <h1 className="text-3xl font-black uppercase text-slate-900 tracking-tighter">
+          <h1 className="text-3xl font-black uppercase text-accent-900 tracking-tighter">
             {personalInfo.firstName} {personalInfo.lastName}
           </h1>
           {personalInfo.title && (
@@ -33,8 +30,8 @@ const EngineeringTemplate: React.FC = () => {
       </header>
 
       {personalInfo.summary && (
-        <section className="mb-6 border-b-2 border-slate-800 pb-4">
-          <div className="bg-slate-800 text-white font-bold uppercase text-xs inline-block px-2 py-1 mb-2">Summary Component</div>
+        <section className="mb-6 border-b-2 border-accent-800 pb-4">
+          <div className="bg-accent-800 text-white font-bold uppercase text-xs inline-block px-2 py-1 mb-2">Summary Component</div>
           <p className="text-sm font-medium text-justify">
             {personalInfo.summary}
           </p>
@@ -42,8 +39,8 @@ const EngineeringTemplate: React.FC = () => {
       )}
 
       {experience.length > 0 && (
-        <section className="mb-6 border-b-2 border-slate-800 pb-4">
-          <div className="bg-slate-800 text-white font-bold uppercase text-xs inline-block px-2 py-1 mb-4">Experience Module</div>
+        <section className="mb-6 border-b-2 border-accent-800 pb-4">
+          <div className="bg-accent-800 text-white font-bold uppercase text-xs inline-block px-2 py-1 mb-4">Experience Module</div>
           <table className="w-full text-sm text-left">
             <tbody>
               {experience.map((exp) => (
@@ -68,7 +65,7 @@ const EngineeringTemplate: React.FC = () => {
       <div className="grid grid-cols-2 gap-6">
         {education.length > 0 && (
           <section>
-            <div className="bg-slate-800 text-white font-bold uppercase text-xs inline-block px-2 py-1 mb-3">Education Array</div>
+            <div className="bg-accent-800 text-white font-bold uppercase text-xs inline-block px-2 py-1 mb-3">Education Array</div>
             <div className="border border-slate-300 bg-slate-50 p-3 space-y-3">
               {education.map((edu) => (
                 <div key={edu.id} className="border-b border-slate-200 last:border-0 pb-2 last:pb-0">
@@ -86,7 +83,7 @@ const EngineeringTemplate: React.FC = () => {
         <div className="space-y-6">
           {skills.length > 0 && (
             <section>
-              <div className="bg-slate-800 text-white font-bold uppercase text-xs inline-block px-2 py-1 mb-3">Core Skills</div>
+              <div className="bg-accent-800 text-white font-bold uppercase text-xs inline-block px-2 py-1 mb-3">Core Skills</div>
               <div className="flex flex-wrap gap-1 p-3 border border-slate-300 bg-slate-50">
                 {skills.map((skill) => (
                   <span key={skill.id} className="border border-slate-800 px-2 py-0.5 text-xs font-bold uppercase bg-white">
@@ -99,7 +96,7 @@ const EngineeringTemplate: React.FC = () => {
 
           {projects.length > 0 && (
             <section>
-              <div className="bg-slate-800 text-white font-bold uppercase text-xs inline-block px-2 py-1 mb-3">Projects Logs</div>
+              <div className="bg-accent-800 text-white font-bold uppercase text-xs inline-block px-2 py-1 mb-3">Projects Logs</div>
               <div className="space-y-2 border border-slate-300 bg-slate-50 p-3">
                 {projects.map((project) => (
                   <div key={project.id} className="text-xs">

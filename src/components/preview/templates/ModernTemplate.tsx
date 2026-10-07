@@ -1,16 +1,13 @@
 import React from 'react';
 import { useResume } from '../../../context/ResumeContext';
+import { formatMonthYear } from '../../../utils/format';
 import { Linkedin, Github, Globe, Mail, Phone, MapPin } from 'lucide-react';
 
 const ModernTemplate: React.FC = () => {
   const { resumeData } = useResume();
   const { personalInfo, education, experience, projects, skills } = resumeData;
   
-  const formatDate = (dateString: string) => {
-    if (!dateString) return '';
-    const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
-  };
+  const formatDate = (value: string) => formatMonthYear(value);
 
   return (
     <div className="bg-white p-8 h-full text-gray-800 leading-relaxed">
@@ -19,7 +16,7 @@ const ModernTemplate: React.FC = () => {
         <h1 className="text-3xl font-bold text-gray-900 mb-1">
           {personalInfo.firstName} {personalInfo.lastName}
         </h1>
-        <p className="text-xl text-blue-600 mb-4">{personalInfo.title}</p>
+        <p className="text-xl text-accent-600 mb-4">{personalInfo.title}</p>
         
         {personalInfo.summary && (
           <p className="text-gray-600 mb-4 leading-relaxed">
@@ -76,8 +73,8 @@ const ModernTemplate: React.FC = () => {
         </div>
       </header>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="md:col-span-2 space-y-6">
+      <div className="grid grid-cols-3 gap-6">
+        <div className="col-span-2 space-y-6">
           {/* Experience Section */}
           {experience.length > 0 && (
             <section>
@@ -88,7 +85,7 @@ const ModernTemplate: React.FC = () => {
                 {experience.map((exp) => (
                   <div key={exp.id} className="mb-4">
                     <div className="flex justify-between mb-1">
-                      <h3 className="font-medium text-blue-600">{exp.position}</h3>
+                      <h3 className="font-medium text-accent-600">{exp.position}</h3>
                       <span className="text-sm text-gray-500">
                         {formatDate(exp.startDate)} - {exp.isCurrentPosition ? 'Present' : formatDate(exp.endDate)}
                       </span>
@@ -111,13 +108,13 @@ const ModernTemplate: React.FC = () => {
                 {projects.map((project) => (
                   <div key={project.id} className="mb-4">
                     <div className="flex justify-between mb-1">
-                      <h3 className="font-medium text-blue-600">{project.title}</h3>
+                      <h3 className="font-medium text-accent-600">{project.title}</h3>
                       {project.link && (
                         <a 
                           href={project.link} 
                           target="_blank" 
                           rel="noopener noreferrer"
-                          className="text-sm text-blue-500 hover:underline"
+                          className="text-sm text-accent-500 hover:underline"
                         >
                           View Project
                         </a>
@@ -147,7 +144,7 @@ const ModernTemplate: React.FC = () => {
                 {education.map((edu) => (
                   <div key={edu.id} className="mb-4">
                     <div className="flex justify-between mb-1">
-                      <h3 className="font-medium text-blue-600">{edu.institution}</h3>
+                      <h3 className="font-medium text-accent-600">{edu.institution}</h3>
                       <span className="text-sm text-gray-500">
                         {formatDate(edu.startDate)} - {formatDate(edu.endDate)}
                       </span>
@@ -172,7 +169,7 @@ const ModernTemplate: React.FC = () => {
                 {skills.map((skill) => (
                   <div 
                     key={skill.id} 
-                    className="bg-blue-50 text-blue-700 px-3 py-1 rounded-full text-sm"
+                    className="bg-accent-50 text-accent-700 px-3 py-1 rounded-full text-sm"
                   >
                     {skill.name}
                   </div>

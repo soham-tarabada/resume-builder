@@ -1,20 +1,17 @@
 import React from 'react';
 import { useResume } from '../../../context/ResumeContext';
+import { formatMonthYear } from '../../../utils/format';
 
 const CleanTemplate: React.FC = () => {
   const { resumeData } = useResume();
   const { personalInfo, education, experience, projects, skills } = resumeData;
   
-  const formatDate = (dateString: string) => {
-    if (!dateString) return '';
-    const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
-  };
+  const formatDate = (value: string) => formatMonthYear(value);
 
   return (
     <div className="bg-white p-10 h-full text-zinc-800 font-sans tracking-wide">
       <header className="mb-10 pb-6 border-b border-zinc-200">
-        <h1 className="text-4xl font-light text-zinc-900 mb-1 tracking-tight">
+        <h1 className="text-4xl font-light text-accent-900 mb-1 tracking-tight">
           {personalInfo.firstName} <span className="font-semibold">{personalInfo.lastName}</span>
         </h1>
         {personalInfo.title && (
@@ -37,7 +34,7 @@ const CleanTemplate: React.FC = () => {
 
       {personalInfo.summary && (
         <section className="mb-8">
-          <h2 className="text-xs font-bold uppercase tracking-widest text-zinc-400 mb-3">Profile</h2>
+          <h2 className="text-xs font-bold uppercase tracking-widest text-accent-400 mb-3">Profile</h2>
           <p className="text-zinc-700 leading-relaxed text-sm">
             {personalInfo.summary}
           </p>
@@ -46,7 +43,7 @@ const CleanTemplate: React.FC = () => {
 
       {experience.length > 0 && (
         <section className="mb-8">
-          <h2 className="text-xs font-bold uppercase tracking-widest text-zinc-400 mb-4">Experience</h2>
+          <h2 className="text-xs font-bold uppercase tracking-widest text-accent-400 mb-4">Experience</h2>
           <div className="space-y-6">
             {experience.map((exp) => (
               <div key={exp.id} className="grid grid-cols-4 gap-4">
@@ -68,7 +65,7 @@ const CleanTemplate: React.FC = () => {
 
       {education.length > 0 && (
         <section className="mb-8">
-          <h2 className="text-xs font-bold uppercase tracking-widest text-zinc-400 mb-4">Education</h2>
+          <h2 className="text-xs font-bold uppercase tracking-widest text-accent-400 mb-4">Education</h2>
           <div className="space-y-6">
             {education.map((edu) => (
               <div key={edu.id} className="grid grid-cols-4 gap-4">
@@ -89,7 +86,7 @@ const CleanTemplate: React.FC = () => {
       <div className="grid grid-cols-2 gap-8">
         {projects.length > 0 && (
           <section>
-            <h2 className="text-xs font-bold uppercase tracking-widest text-zinc-400 mb-4">Projects</h2>
+            <h2 className="text-xs font-bold uppercase tracking-widest text-accent-400 mb-4">Projects</h2>
             <div className="space-y-4">
               {projects.map((project) => (
                 <div key={project.id}>
@@ -103,7 +100,7 @@ const CleanTemplate: React.FC = () => {
 
         {skills.length > 0 && (
           <section>
-            <h2 className="text-xs font-bold uppercase tracking-widest text-zinc-400 mb-4">Skills</h2>
+            <h2 className="text-xs font-bold uppercase tracking-widest text-accent-400 mb-4">Skills</h2>
             <ul className="list-disc list-inside text-sm text-zinc-700 space-y-1">
               {skills.map((skill) => (
                 <li key={skill.id}>{skill.name}</li>

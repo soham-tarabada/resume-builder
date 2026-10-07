@@ -1,21 +1,17 @@
 import React from 'react';
 import { useResume } from '../../../context/ResumeContext';
+import { formatMonthYear, toBullets } from '../../../utils/format';
 
 const StandardTemplate: React.FC = () => {
   const { resumeData } = useResume();
   const { personalInfo, education, experience, projects, skills } = resumeData;
   
-  const formatDate = (dateString: string) => {
-    if (!dateString) return '';
-    const date = new Date(dateString);
-    // Standard format for ATS: MM/YYYY
-    return `${(date.getMonth() + 1).toString().padStart(2, '0')}/${date.getFullYear()}`;
-  };
+  const formatDate = (value: string) => formatMonthYear(value, 'numeric');
 
   return (
     <div className="bg-white p-8 h-full text-black font-sans leading-snug">
       <header className="mb-4 text-center">
-        <h1 className="text-2xl font-bold uppercase mb-1">
+        <h1 className="text-accent-900 text-2xl font-bold uppercase mb-1">
           {personalInfo.firstName} {personalInfo.lastName}
         </h1>
         <div className="text-sm">
@@ -28,7 +24,7 @@ const StandardTemplate: React.FC = () => {
 
       {personalInfo.summary && (
         <section className="mb-4">
-          <h2 className="text-lg font-bold uppercase border-b border-black mb-2">Professional Summary</h2>
+          <h2 className="text-accent-900 text-lg font-bold uppercase border-b border-accent-900 mb-2">Professional Summary</h2>
           <p className="text-sm text-justify">
             {personalInfo.summary}
           </p>
@@ -37,7 +33,7 @@ const StandardTemplate: React.FC = () => {
 
       {skills.length > 0 && (
         <section className="mb-4">
-          <h2 className="text-lg font-bold uppercase border-b border-black mb-2">Skills</h2>
+          <h2 className="text-accent-900 text-lg font-bold uppercase border-b border-accent-900 mb-2">Skills</h2>
           <p className="text-sm">
             {skills.map(s => s.name).join(', ')}
           </p>
@@ -46,7 +42,7 @@ const StandardTemplate: React.FC = () => {
 
       {experience.length > 0 && (
         <section className="mb-4">
-          <h2 className="text-lg font-bold uppercase border-b border-black mb-2">Work Experience</h2>
+          <h2 className="text-accent-900 text-lg font-bold uppercase border-b border-accent-900 mb-2">Work Experience</h2>
           <div className="space-y-4">
             {experience.map((exp) => (
               <div key={exp.id}>
@@ -61,8 +57,8 @@ const StandardTemplate: React.FC = () => {
                   <span>{exp.location}</span>
                 </div>
                 <ul className="list-disc list-inside text-sm">
-                  {exp.description.split('\n').filter(line => line.trim()).map((line, i) => (
-                    <li key={i}>{line.replace(/^- /, '')}</li>
+                  {toBullets(exp.description).map((line, i) => (
+                    <li key={i}>{line}</li>
                   ))}
                 </ul>
               </div>
@@ -73,7 +69,7 @@ const StandardTemplate: React.FC = () => {
 
       {education.length > 0 && (
         <section className="mb-4">
-          <h2 className="text-lg font-bold uppercase border-b border-black mb-2">Education</h2>
+          <h2 className="text-accent-900 text-lg font-bold uppercase border-b border-accent-900 mb-2">Education</h2>
           <div className="space-y-3">
             {education.map((edu) => (
               <div key={edu.id}>
@@ -92,7 +88,7 @@ const StandardTemplate: React.FC = () => {
 
       {projects.length > 0 && (
         <section className="mb-4">
-          <h2 className="text-lg font-bold uppercase border-b border-black mb-2">Projects</h2>
+          <h2 className="text-accent-900 text-lg font-bold uppercase border-b border-accent-900 mb-2">Projects</h2>
           <div className="space-y-3">
             {projects.map((project) => (
               <div key={project.id}>

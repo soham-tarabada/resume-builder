@@ -1,20 +1,17 @@
 import React from 'react';
 import { useResume } from '../../../context/ResumeContext';
+import { formatMonthYear } from '../../../utils/format';
 
 const SimpleTemplate: React.FC = () => {
   const { resumeData } = useResume();
   const { personalInfo, education, experience, projects, skills } = resumeData;
   
-  const formatDate = (dateString: string) => {
-    if (!dateString) return '';
-    const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
-  };
+  const formatDate = (value: string) => formatMonthYear(value);
 
   return (
     <div className="bg-white p-10 h-full text-black font-sans text-sm">
       <header className="mb-6 text-center">
-        <h1 className="text-3xl font-normal mb-1">
+        <h1 className="text-accent-900 text-3xl font-normal mb-1">
           {personalInfo.firstName} {personalInfo.lastName}
         </h1>
         <div className="text-gray-600">
@@ -35,7 +32,7 @@ const SimpleTemplate: React.FC = () => {
 
       {experience.length > 0 && (
         <section className="mb-6">
-          <h2 className="text-lg font-bold border-b border-gray-300 mb-2 pb-1">Experience</h2>
+          <h2 className="text-accent-900 text-lg font-bold border-b border-accent-300 mb-2 pb-1">Experience</h2>
           <div className="space-y-4">
             {experience.map((exp) => (
               <div key={exp.id}>
@@ -55,7 +52,7 @@ const SimpleTemplate: React.FC = () => {
 
       {education.length > 0 && (
         <section className="mb-6">
-          <h2 className="text-lg font-bold border-b border-gray-300 mb-2 pb-1">Education</h2>
+          <h2 className="text-accent-900 text-lg font-bold border-b border-accent-300 mb-2 pb-1">Education</h2>
           <div className="space-y-3">
             {education.map((edu) => (
               <div key={edu.id}>
@@ -72,14 +69,14 @@ const SimpleTemplate: React.FC = () => {
 
       {skills.length > 0 && (
         <section className="mb-6">
-          <h2 className="text-lg font-bold border-b border-gray-300 mb-2 pb-1">Skills</h2>
+          <h2 className="text-accent-900 text-lg font-bold border-b border-accent-300 mb-2 pb-1">Skills</h2>
           <p>{skills.map((s) => s.name).join(', ')}</p>
         </section>
       )}
 
       {projects.length > 0 && (
         <section>
-          <h2 className="text-lg font-bold border-b border-gray-300 mb-2 pb-1">Projects</h2>
+          <h2 className="text-accent-900 text-lg font-bold border-b border-accent-300 mb-2 pb-1">Projects</h2>
           <div className="space-y-3">
             {projects.map((project) => (
               <div key={project.id}>

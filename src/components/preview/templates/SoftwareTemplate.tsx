@@ -1,15 +1,12 @@
 import React from 'react';
 import { useResume } from '../../../context/ResumeContext';
+import { formatMonthYear } from '../../../utils/format';
 
 const SoftwareTemplate: React.FC = () => {
   const { resumeData } = useResume();
   const { personalInfo, education, experience, projects, skills } = resumeData;
   
-  const formatDate = (dateString: string) => {
-    if (!dateString) return '';
-    const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
-  };
+  const formatDate = (value: string) => formatMonthYear(value);
 
   return (
     <div className="bg-[#1e1e1e] p-8 h-full text-[#d4d4d4] font-mono text-sm leading-relaxed overflow-hidden">
@@ -80,7 +77,7 @@ const SoftwareTemplate: React.FC = () => {
                 <div key={edu.id} className="border-l border-[#404040] pl-4">
                   <div><span className="text-[#9cdcfe]">degree</span>: <span className="text-[#ce9178]">"{edu.degree}"</span>,</div>
                   <div><span className="text-[#9cdcfe]">school</span>: <span className="text-[#ce9178]">"{edu.institution}"</span>,</div>
-                  <div><span className="text-[#9cdcfe]">year</span>: <span className="text-[#b5cea8]">{new Date(edu.endDate).getFullYear() || 'null'}</span></div>
+                  <div><span className="text-[#9cdcfe]">year</span>: <span className="text-[#b5cea8]">{formatMonthYear(edu.endDate, 'year') || 'null'}</span></div>
                 </div>
               ))}
             </div>

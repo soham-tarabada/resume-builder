@@ -1,10 +1,17 @@
 import React from 'react';
+import { GraduationCap } from 'lucide-react';
 import { useResume } from '../../context/ResumeContext';
+import { useRemoveWithUndo } from '../../hooks/useRemoveWithUndo';
+import { dateRange } from '../../utils/format';
+import EmptyState from '../ui/EmptyState';
 import FormField from '../ui/FormField';
-import { Plus, Trash2 } from 'lucide-react';
+import ItemCard from '../ui/ItemCard';
+import SectionHeader from '../ui/SectionHeader';
+import TextAreaField from '../ui/TextAreaField';
 
 const EducationForm: React.FC = () => {
-  const { resumeData, addEducation, updateEducation, removeEducation } = useResume();
+  const { resumeData, addEducation, updateEducation, moveItem } = useResume();
+  const removeWithUndo = useRemoveWithUndo();
   const { education } = resumeData;
 
   const handleChange = (id: string, e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -13,98 +20,50 @@ const EducationForm: React.FC = () => {
   };
 
   return (
-    <div className="space-y-8 animate-fadeIn">
-      <div className="flex justify-between items-center">
-        <h3 className="text-lg font-medium text-gray-900">Education</h3>
-        <button
-          type="button"
-          onClick={addEducation}
-          className="inline-flex items-center px-3 py-1.5 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-        >
-          <Plus className="h-4 w-4 mr-1" />
-          Add Education
-        </button>
-      </div>
+    <div className="space-y-6 animate-fadeIn">
+      <SectionHeader
+        title="Education"
+        description="Degrees, bootcamps and certifications."
+        addLabel="Add education"
+        onAdd={addEducation}
+      />
 
       {education.length === 0 ? (
-        <div className="text-center py-8 border-2 border-dashed border-gray-200 rounded-lg">
-          <p className="text-gray-500">No education added yet. Click "Add Education" to get started.</p>
-        </div>
+        <EmptyState
+          icon={<GraduationCap className="h-6 w-6" />}
+          title="No education yet"
+          description="Add your degree, or a certification that's relevant to the roles you want."
+          actionLabel="Add education"
+          onAction={addEducation}
+        />
       ) : (
         education.map((edu, index) => (
-          <div key={edu.id} className="p-6 border border-gray-200 rounded-lg relative">
-            <button
-              type="button"
-              onClick={() => removeEducation(edu.id)}
-              className="absolute top-4 right-4 text-gray-400 hover:text-red-500 transition-colors"
-              aria-label="Remove education"
-            >
-              <Trash2 className="h-5 w-5" />
-            </button>
-            
-            <h4 className="font-medium text-gray-900 mb-4">Education #{index + 1}</h4>
-            
-            <div className="space-y-4">
-              <FormField
-                label="Institution"
-                name="institution"
-                value={edu.institution}
-                onChange={(e) => handleChange(edu.id, e)}
-                placeholder="Harvard University"
-                required
-              />
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <FormField
-                  label="Degree"
-                  name="degree"
-                  value={edu.degree}
-                  onChange={(e) => handleChange(edu.id, e)}
-                  placeholder="Bachelor of Science"
-                />
-                
-                <FormField
-                  label="Field of Study"
-                  name="fieldOfStudy"
-                  value={edu.fieldOfStudy}
-                  onChange={(e) => handleChange(edu.id, e)}
-                  placeholder="Computer Science"
-                />
-              </div>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <FormField
-                  label="Start Date"
-                  name="startDate"
-                  type="month"
-                  value={edu.startDate}
-                  onChange={(e) => handleChange(edu.id, e)}
-                />
-                
-                <FormField
-                  label="End Date (or Expected)"
-                  name="endDate"
-                  type="month"
-                  value={edu.endDate}
-                  onChange={(e) => handleChange(edu.id, e)}
-                />
-              </div>
-              
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Description / Achievements
-                </label>
-                <textarea
-                  name="description"
-                  value={edu.description}
-                  onChange={(e) => handleChange(edu.id, e)}
-                  rows={3}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                  placeholder="Describe your studies, achievements, relevant coursework, etc."
-                />
-              </div>
+          <ItemCard
+            key={edu.id}
+            index={index}
+            total={education.length}
+            title={edu.institution || 'New education'}
+            subtitle={[edu.degree, dateRange(edu.startDate, edu.endDate)].filter(Boolean).join(' · ')}
+            onMove={direction => moveItem('education', edu.id, direction)}
+            onRemove={() => removeWithUndo('education', edu.id, edu.institution || 'Education')}
+          >
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <FormField idPrefix={edu.id} label="Institution" name="institution" value={edu.institution} onChange={e => handleChange(edu.id, e)} placeholder="University of Washington" required className="sm:col-span-2" />
+              <FormField idPrefix={edu.id} label="Degree" name="degree" value={edu.degree} onChange={e => handleChange(edu.id, e)} placeholder="B.S. Computer Science" />
+              <FormField idPrefix={edu.id} label="Field of study" name="fieldOfStudy" value={edu.fieldOfStudy} onChange={e => handleChange(edu.id, e)} placeholder="Human-Computer Interaction" />
+              <FormField idPrefix={edu.id} label="Start date" name="startDate" type="month" value={edu.startDate} onChange={e => handleChange(edu.id, e)} />
+              <FormField idPrefix={edu.id} label="End date (or expected)" name="endDate" type="month" value={edu.endDate} onChange={e => handleChange(edu.id, e)} />
             </div>
-          </div>
+            <TextAreaField
+              idPrefix={edu.id}
+              label="Highlights"
+              name="description"
+              value={edu.description}
+              onChange={e => handleChange(edu.id, e)}
+              rows={3}
+              placeholder="GPA 3.8 · Dean's List · Led the campus ACM chapter"
+            />
+          </ItemCard>
         ))
       )}
     </div>

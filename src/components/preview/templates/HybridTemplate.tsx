@@ -1,20 +1,17 @@
 import React from 'react';
 import { useResume } from '../../../context/ResumeContext';
+import { formatMonthYear } from '../../../utils/format';
 
 const HybridTemplate: React.FC = () => {
   const { resumeData } = useResume();
   const { personalInfo, education, experience, projects, skills } = resumeData;
   
-  const formatDate = (dateString: string) => {
-    if (!dateString) return '';
-    const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
-  };
+  const formatDate = (value: string) => formatMonthYear(value);
 
   return (
     <div className="bg-white h-full flex font-sans text-gray-800">
       {/* Sidebar */}
-      <div className="w-[35%] bg-blue-900 text-white p-6 flex flex-col gap-6">
+      <div className="w-[35%] bg-accent-900 text-white p-6 flex flex-col gap-6">
         <div className="text-center mb-4">
           <div className="w-24 h-24 bg-white/10 rounded-full mx-auto mb-4 flex items-center justify-center border-2 border-white/20">
             <span className="text-3xl font-bold text-white">
@@ -25,13 +22,13 @@ const HybridTemplate: React.FC = () => {
             {personalInfo.firstName} <br/> {personalInfo.lastName}
           </h1>
           {personalInfo.title && (
-            <p className="text-blue-300 font-medium uppercase text-sm tracking-widest mt-2">{personalInfo.title}</p>
+            <p className="text-accent-300 font-medium uppercase text-sm tracking-widest mt-2">{personalInfo.title}</p>
           )}
         </div>
 
         <div>
-          <h2 className="text-xs font-bold uppercase tracking-widest text-blue-300 border-b border-blue-700 pb-1 mb-3">Contact</h2>
-          <div className="space-y-2 text-sm text-blue-100">
+          <h2 className="text-xs font-bold uppercase tracking-widest text-accent-300 border-b border-accent-700 pb-1 mb-3">Contact</h2>
+          <div className="space-y-2 text-sm text-accent-100">
             {personalInfo.email && <div className="break-all">{personalInfo.email}</div>}
             {personalInfo.phone && <div>{personalInfo.phone}</div>}
             {(personalInfo.city || personalInfo.state) && (
@@ -44,13 +41,13 @@ const HybridTemplate: React.FC = () => {
 
         {education.length > 0 && (
           <div>
-            <h2 className="text-xs font-bold uppercase tracking-widest text-blue-300 border-b border-blue-700 pb-1 mb-3">Education</h2>
+            <h2 className="text-xs font-bold uppercase tracking-widest text-accent-300 border-b border-accent-700 pb-1 mb-3">Education</h2>
             <div className="space-y-4">
               {education.map((edu) => (
                 <div key={edu.id} className="text-sm">
                   <div className="font-bold text-white">{edu.degree}</div>
-                  <div className="text-blue-200 mt-1">{edu.institution}</div>
-                  <div className="text-blue-400 text-xs mt-1">
+                  <div className="text-accent-200 mt-1">{edu.institution}</div>
+                  <div className="text-accent-400 text-xs mt-1">
                     {formatDate(edu.startDate)} - {formatDate(edu.endDate)}
                   </div>
                 </div>
@@ -61,7 +58,7 @@ const HybridTemplate: React.FC = () => {
 
         {skills.length > 0 && (
           <div>
-            <h2 className="text-xs font-bold uppercase tracking-widest text-blue-300 border-b border-blue-700 pb-1 mb-3">Skills</h2>
+            <h2 className="text-xs font-bold uppercase tracking-widest text-accent-300 border-b border-accent-700 pb-1 mb-3">Skills</h2>
             <div className="flex flex-wrap gap-2">
               {skills.map((skill) => (
                 <span key={skill.id} className="bg-white/10 text-white px-2 py-1 text-xs font-medium rounded">
@@ -92,7 +89,7 @@ const HybridTemplate: React.FC = () => {
                 <div key={exp.id}>
                   <div className="flex justify-between items-baseline">
                     <h3 className="font-bold text-lg text-gray-900">{exp.position}</h3>
-                    <span className="text-xs font-bold text-blue-600 bg-blue-100 px-2 py-1 rounded-full">
+                    <span className="text-xs font-bold text-accent-600 bg-accent-100 px-2 py-1 rounded-full">
                       {formatDate(exp.startDate)} - {exp.isCurrentPosition ? 'Present' : formatDate(exp.endDate)}
                     </span>
                   </div>

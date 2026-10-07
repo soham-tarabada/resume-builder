@@ -1,21 +1,17 @@
-import Header from './components/layout/Header';
-import ResumeBuilder from './components/ResumeBuilder';
+import BuilderPage from './components/builder/BuilderPage';
+import LandingPage from './components/landing/LandingPage';
+import { ToastProvider } from './components/ui/Toast';
 import { ResumeProvider } from './context/ResumeContext';
+import { useHashRoute } from './hooks/useHashRoute';
 
 function App() {
+  const { route, navigate } = useHashRoute();
+
   return (
     <ResumeProvider>
-      <div className="min-h-screen bg-gray-50 flex flex-col">
-        <Header />
-        <main className="flex-1">
-          <ResumeBuilder />
-        </main>
-        <footer className="bg-white py-4 border-t border-gray-200">
-          <div className="container mx-auto px-4 text-center text-sm text-gray-500">
-            <p>© {new Date().getFullYear()} Resume Builder. All rights reserved.</p>
-          </div>
-        </footer>
-      </div>
+      <ToastProvider>
+        {route === 'builder' ? <BuilderPage /> : <LandingPage onStart={() => navigate('builder')} />}
+      </ToastProvider>
     </ResumeProvider>
   );
 }
