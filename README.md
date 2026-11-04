@@ -96,3 +96,5 @@ Resume Builder/
 
 ## License
 This project is licensed under the MIT License.
+
+<!-- Automated scheduled check: README reviewed on 2026-11-04. No content changes beyond this comment. -->
