@@ -1,4 +1,5 @@
 # Resume Builder
+<!-- Automated comment added by scheduled task on 2026-11-23. -->
 
 Resume Builder is a modern, easy-to-use web application for creating beautiful, professional resumes. It features real-time preview, PDF export, and multiple templates, making it simple for users to craft and download their resumes quickly.
 
